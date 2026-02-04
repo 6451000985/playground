@@ -23,3 +23,7 @@ spring:
 
 server:
   port: 8082
+
+jwt:
+  secret: your-256-bit-secret-key-here-change-in-production-minimum-32-characters
+  expiration: 86400000
