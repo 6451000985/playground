@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LearnHub Playground - Spring Boot 4.0.2 backend application with user management and role-based access control (RBAC). Uses Java 21, PostgreSQL, and Flyway for database migrations.
+LearnHub Playground - Spring Boot 4.0.2 backend application with JWT authentication, user management, and role-based access control (RBAC). Uses Java 21, PostgreSQL, and Flyway for database migrations.
 
 ## Build & Run Commands
 
@@ -37,9 +37,12 @@ Database connection: `localhost:5436`, database/user/password: `playgroundposgre
 ## Architecture
 
 **Package Structure:** `com.learnhub.playgound`
-- `user/domain/` - JPA entities
-- `user/repository/` - Spring Data JPA repositories
-- `user/service/` - Business logic services
+- `auth/` - Authentication (login, register, token refresh) with JWT
+- `user/` - User management with domain entities, repositories, services, and controllers
+- `config/` - Security configuration (JWT filter, SecurityConfig) and Swagger setup
+- `common/` - Shared DTOs and global exception handling
+
+**Security:** JWT-based stateless authentication with access/refresh tokens. Public endpoints: `/api/auth/**`, `/swagger-ui/**`, `/v3/api-docs/**`. All other endpoints require authentication.
 
 **Database Schema (Flyway migrations in `src/main/resources/db/migration/`):**
 - `users` / `user_profiles` - User management with extended profile data
@@ -52,4 +55,4 @@ Database connection: `localhost:5436`, database/user/password: `playgroundposgre
 - Server port: 8082
 - JPA DDL: `none` (schema managed by Flyway)
 - DevTools: Hot reload enabled
-- Spring Security: Available in pom.xml but currently commented out
+- JWT tokens configured in `application.yaml` (access: 15min, refresh: 7 days)

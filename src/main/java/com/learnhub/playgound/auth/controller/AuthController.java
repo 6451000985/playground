@@ -2,6 +2,7 @@ package com.learnhub.playgound.auth.controller;
 
 import com.learnhub.playgound.auth.dto.AuthResponse;
 import com.learnhub.playgound.auth.dto.LoginRequest;
+import com.learnhub.playgound.auth.dto.RefreshTokenRequest;
 import com.learnhub.playgound.auth.dto.RegisterRequest;
 import com.learnhub.playgound.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,5 +35,11 @@ public class AuthController {
     @Operation(summary = "Login with email and password")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token using refresh token")
+    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
     }
 }
