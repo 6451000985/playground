@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,7 @@ public class UserServiceTest
 
 
     @Test
-    void whenCreateUserThenSuccess(){
+    void whenCreateUser_ThenSuccess(){
 
         LocalDateTime expectedTime = LocalDateTime.of(2025, 2, 14, 17, 0);
 
@@ -74,6 +75,122 @@ public class UserServiceTest
 
 
     }
+
+    @Test
+    void GetUserById_WhenUserExists_ShouldDeleteSuccessfully(){
+
+        Long id =1L;
+
+        LocalDateTime expectedTime = LocalDateTime.of(2025, 2, 14, 17, 0);
+
+        User savedUser = new User();
+        savedUser.setId(1L);
+        savedUser.setEmail("test@mail.com");
+        savedUser.setPasswordHash("hashed");
+        savedUser.setFirstName("John");
+        savedUser.setLastName("Doe");
+        savedUser.setAvatarUrl("testavatarurl.com");
+        savedUser.setActive(true);
+        savedUser.setVerified(false);
+        savedUser.setLastLogin(expectedTime);
+        savedUser.setCreatedAt(expectedTime);
+        savedUser.setUpdatedAt(expectedTime);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(savedUser));
+
+
+        UserResponse userResponse = userService.getUserById(id);
+
+        assertEquals(1,userResponse.id().intValue());
+        assertEquals("test@mail.com",userResponse.email());
+        assertEquals("John",userResponse.firstName());
+        assertEquals("Doe",userResponse.lastName());
+        assertEquals("testavatarurl.com",userResponse.avatarUrl());
+        assertFalse(userResponse.isVerified());
+        assertTrue(userResponse.isActive());
+        assertEquals(expectedTime,userResponse.lastLogin());
+        assertEquals(expectedTime,userResponse.createdAt());
+        assertEquals(expectedTime,userResponse.updatedAt());
+
+
+    }
+
+    @Test
+    void  GetUserById_WhenUserDoesNotExist_ShouldThrowException(){
+        Long id = 1L;
+
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,() -> {
+            userService.getUserById(id);
+                }
+        );
+
+        assertEquals("User not found with id: " + id,exception.getMessage());
+        verify(userRepository).findById(id);
+        verifyNoMoreInteractions(userRepository);
+
+    }
+
+
+    @Test
+    void getUserByEmail_WhenUserExists_ShouldDeleteSuccessfully(){
+
+        String email = "getUserByEmail";
+
+        LocalDateTime expectedTime = LocalDateTime.of(2025, 2, 14, 17, 0);
+
+        User savedUser = new User();
+        savedUser.setId(1L);
+        savedUser.setEmail("test@mail.com");
+        savedUser.setPasswordHash("hashed");
+        savedUser.setFirstName("John");
+        savedUser.setLastName("Doe");
+        savedUser.setAvatarUrl("testavatarurl.com");
+        savedUser.setActive(true);
+        savedUser.setVerified(false);
+        savedUser.setLastLogin(expectedTime);
+        savedUser.setCreatedAt(expectedTime);
+        savedUser.setUpdatedAt(expectedTime);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(savedUser));
+
+
+        UserResponse userResponse = userService.getUserByEmail(email);
+
+        assertEquals(1,userResponse.id().intValue());
+        assertEquals("test@mail.com",userResponse.email());
+        assertEquals("John",userResponse.firstName());
+        assertEquals("Doe",userResponse.lastName());
+        assertEquals("testavatarurl.com",userResponse.avatarUrl());
+        assertFalse(userResponse.isVerified());
+        assertTrue(userResponse.isActive());
+        assertEquals(expectedTime,userResponse.lastLogin());
+        assertEquals(expectedTime,userResponse.createdAt());
+        assertEquals(expectedTime,userResponse.updatedAt());
+
+
+    }
+
+    @Test
+    void  getUserByEmail_WhenUserDoesNotExist_ShouldThrowException(){
+
+
+        String email = "getUserByEmail";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,() -> {
+                    userService.getUserByEmail(email);
+                }
+        );
+
+        assertEquals("User not found with email: " + email ,exception.getMessage());
+        verify(userRepository).findByEmail(email);
+        verifyNoMoreInteractions(userRepository);
+
+    }
+
+
 
     @Test
     void deleteUser_WhenUserExists_ShouldDeleteSuccessfully() {
