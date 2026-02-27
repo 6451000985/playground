@@ -48,6 +48,8 @@ public class UserService {
         return UserResponse.fromEntity(user);
     }
 
+
+
     @Transactional
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         User user = userRepository.findById(id)
