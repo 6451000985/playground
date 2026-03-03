@@ -78,7 +78,7 @@ public class UserServiceTest
     }
 
     @Test
-    void GetUserById_WhenUserExists_ShouldDeleteSuccessfully(){
+    void GetUserById_WhenUserExists_ShouldSuccessfully(){
 
         Long id =1L;
 
@@ -192,7 +192,7 @@ public class UserServiceTest
     }
 
     @Test
-    void opdateUser_WhenUserExists_ShouldDeleteSuccessfully(){
+    void updateUser_WhenUserExists_ShouldDeleteSuccessfully(){
         LocalDateTime expectedTime = LocalDateTime.of(2025, 2, 14, 17, 0);
         Long id = 1L;
         UpdateUserRequest userRequest = new UpdateUserRequest("Testman","UnitBoy","UnitTest.com");
