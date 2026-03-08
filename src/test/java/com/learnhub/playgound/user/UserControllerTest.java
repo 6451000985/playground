@@ -7,6 +7,7 @@ import com.learnhub.playgound.config.TestConfig;
 import com.learnhub.playgound.user.controller.UserController;
 import com.learnhub.playgound.user.domain.User;
 import com.learnhub.playgound.user.dto.CreateUserRequest;
+import com.learnhub.playgound.user.dto.UpdateUserRequest;
 import com.learnhub.playgound.user.dto.UserResponse;
 import com.learnhub.playgound.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -180,11 +181,46 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.avatarUrl").value("testavatarurl.com"))
-                .andExpect(jsonPath("$.isActive").value("true"))
-                .andExpect(jsonPath("$.isVerified").value("false"));
+                .andExpect(jsonPath("$.isActive").value(true))
+                .andExpect(jsonPath("$.isVerified").value(false));
 
 
         verify(userService, times(1)).createUser(createUserRequest);
 
+    }
+
+    @Test
+    @WithMockUser
+    void UpdateUser_thenSuccessfully() throws Exception {
+        LocalDateTime expectedTime = LocalDateTime.of(2025, 2, 14, 17, 0);
+        Long id = 1L;
+        UpdateUserRequest userRequest = new UpdateUserRequest("Testman","UnitBoy","UnitTest.com");
+
+        User updatedUser = new User();
+        updatedUser.setId(1L);
+        updatedUser.setEmail("test@mail.com");
+        updatedUser.setPasswordHash("hashed");
+        updatedUser.setFirstName("Testman");
+        updatedUser.setLastName("UnitBoy");
+        updatedUser.setAvatarUrl("UnitTest.com");
+        updatedUser.setActive(true);
+        updatedUser.setVerified(false);
+        updatedUser.setLastLogin(expectedTime);
+        updatedUser.setCreatedAt(expectedTime);
+        updatedUser.setUpdatedAt(expectedTime);
+
+        when(userService.updateUser(id,userRequest)).thenReturn(UserResponse.fromEntity(updatedUser));
+
+        mockMvc.perform(put(String.format("/api/users/%s",1))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(userRequest)).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.email").value("test@mail.com"))
+                .andExpect(jsonPath("$.firstName").value("Testman"))
+                .andExpect(jsonPath("$.lastName").value("UnitBoy"))
+                .andExpect(jsonPath("$.avatarUrl").value("UnitTest.com"))
+                .andExpect(jsonPath("$.isActive").value(true))
+                .andExpect(jsonPath("$.isVerified").value(false));
     }
 }
